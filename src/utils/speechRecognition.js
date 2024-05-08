@@ -1,6 +1,7 @@
 let recognition;
+let setRecognizedText; // This variable will hold the setter function for recognizedText
 
-export function setupSpeechRecognition() {
+export function setupSpeechRecognition(setter) {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
         recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'en-US';
@@ -10,12 +11,16 @@ export function setupSpeechRecognition() {
         recognition.onresult = (event) => {
             const result = event.results[0][0].transcript;
             console.log('Recognized speech:', result);
-            // Handle the recognized speech, e.g., send it to an API 
+            if (setRecognizedText) {
+                setRecognizedText(result); // Update the recognizedText state in the React component
+            }
         };
 
         recognition.onerror = (event) => {
             console.error('Speech recognition error:', event.error);
         };
+
+        setRecognizedText = setter; // Assign the setter function for recognizedText
     } else {
         console.log('Web Speech API is not supported in this browser');
     }

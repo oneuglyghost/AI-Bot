@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { setupSpeechRecognition, startSpeechRecognition } from './utils/speechRecognition';
 
 const App = () => {
+    const [recognizedText, setRecognizedText] = useState('');
+
     useEffect(() => {
-        setupSpeechRecognition();
+        setupSpeechRecognition(setRecognizedText);
     }, []);
 
     const handleStartRecognition = () => {
@@ -14,6 +16,7 @@ const App = () => {
         <div>
             <h1>Voice to Text</h1>
             <button onClick={handleStartRecognition}>Start Listening</button>
+            <p>Recognized Text: {recognizedText}</p>
         </div>
     );
 };
