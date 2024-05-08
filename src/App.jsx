@@ -1,12 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { setupSpeechRecognition, startSpeechRecognition } from './utils/speechRecognition';
 
 const App = () => {
-    const [recognizedText, setRecognizedText] = useState('');
+    const [recognizedText, setRecognizedText] = React.useState('');
+    const [isListening, setIsListening] = React.useState(false);
+    const [textHistory, setTextHistory] = React.useState([]);
 
     useEffect(() => {
-        setupSpeechRecognition(setRecognizedText);
+        setupSpeechRecognition(updateRecognizedText, setIsListening);
     }, []);
+
+    const updateRecognizedText = (text) => {
+        setRecognizedText(text);
+        setTextHistory(prevHistory => [...prevHistory, text]);
+    };
 
     const handleStartRecognition = () => {
         startSpeechRecognition();
@@ -15,8 +22,18 @@ const App = () => {
     return (
         <div>
             <h1>Voice to Text</h1>
-            <button onClick={handleStartRecognition}>Start Listening</button>
+            <button style={{ backgroundColor: isListening ? 'red' : 'green' }} onClick={handleStartRecognition}>
+                {isListening ? 'Listening...' : 'Start Listening'}
+            </button>
             <p>Recognized Text: {recognizedText}</p>
+            <div>
+                <h2>Text History:</h2>
+                <ul>
+                    {textHistory.map((text, index) => (
+                        <li key={index}>{text}</li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 };

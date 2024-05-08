@@ -1,7 +1,11 @@
 let recognition;
-let setRecognizedText; // This variable will hold the setter function for recognizedText
+let setRecognizedText;
+let setIsListening;
 
-export function setupSpeechRecognition(setter) {
+export function setupSpeechRecognition(setRecognizedTextCallback, setIsListeningCallback) {
+    setRecognizedText = setRecognizedTextCallback;
+    setIsListening = setIsListeningCallback;
+
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
         recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'en-US';
@@ -11,25 +15,28 @@ export function setupSpeechRecognition(setter) {
         recognition.onresult = (event) => {
             const result = event.results[0][0].transcript;
             console.log('Recognized speech:', result);
-            if (setRecognizedText) {
-                setRecognizedText(result); // Update the recognizedText state in the React component
-            }
+            setRecognizedText(result);
+            recognition.stop(); // Stop listening
         };
 
         recognition.onerror = (event) => {
             console.error('Speech recognition error:', event.error);
+            setIsListening(false); // Set listening to false if an error occurs
         };
 
-        setRecognizedText = setter; // Assign the setter function for recognizedText
+        recognition.onend = () => {
+            setIsListening(false); // Set listening to false when recognition stops
+        };
     } else {
         console.log('Web Speech API is not supported in this browser');
     }
 }
 
 export function startSpeechRecognition() {
-    if (recognition) {
+    if (recognition && recognition.state !== 'listening') {
+        setIsListening(true);
         recognition.start();
     } else {
-        console.error('Speech recognition has not been set up');
+        console.error('Speech recognition is already running');
     }
 }
