@@ -1,10 +1,17 @@
+import axios from 'axios';
+
+
+const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
+
 let recognition;
 let setRecognizedText;
 let setIsListening;
+let setGeneratedMessage;
 
-export function setupSpeechRecognition(setRecognizedTextCallback, setIsListeningCallback) {
+export function setupSpeechRecognition(setRecognizedTextCallback, setIsListeningCallback, setGeneratedMessageCallback) {
     setRecognizedText = setRecognizedTextCallback;
     setIsListening = setIsListeningCallback;
+    setGeneratedMessage = setGeneratedMessageCallback;
 
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
         recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -39,4 +46,40 @@ export function startSpeechRecognition() {
     } else {
         console.error('Speech recognition is already running');
     }
+
+    recognition.onresult = async (event) => {
+        const result = event.results[0][0].transcript;
+        console.log('Recognized speech:', result);
+        setRecognizedText(result);
+        setIsListening(false);
+        
+        try {
+            const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a helpful assistant. that can hear me "
+                    },
+                    {
+                        role: "user",
+                        content: result
+                    }
+                ]
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const generatedMessage = response.data.choices[0].message.content;
+            console.log('Generated message:', generatedMessage);
+
+            // Set the generated message state
+            setGeneratedMessage(generatedMessage);
+        } catch (error) {
+            console.error('Error generating text:', error);
+        }
+    };
 }

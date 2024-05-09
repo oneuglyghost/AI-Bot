@@ -3,16 +3,16 @@ import { setupSpeechRecognition, startSpeechRecognition } from './utils/speechRe
 
 const App = () => {
     const [recognizedText, setRecognizedText] = React.useState('');
+    const [generatedMessages, setGeneratedMessages] = React.useState([]);
     const [isListening, setIsListening] = React.useState(false);
-    const [textHistory, setTextHistory] = React.useState([]);
 
     useEffect(() => {
-        setupSpeechRecognition(updateRecognizedText, setIsListening);
+        setupSpeechRecognition(handleRecognitionResult, setIsListening, setGeneratedMessages);
     }, []);
 
-    const updateRecognizedText = (text) => {
-        setRecognizedText(text);
-        setTextHistory(prevHistory => [...prevHistory, text]);
+    const handleRecognitionResult = (recognized, generated) => {
+        setRecognizedText(recognized);
+        setGeneratedMessages(prevMessages => [...prevMessages, generated]);
     };
 
     const handleStartRecognition = () => {
@@ -25,14 +25,9 @@ const App = () => {
             <button style={{ backgroundColor: isListening ? 'red' : 'green' }} onClick={handleStartRecognition}>
                 {isListening ? 'Listening...' : 'Start Listening'}
             </button>
-            <p>Recognized Text: {recognizedText}</p>
             <div>
-                <h2>Text History:</h2>
-                <ul>
-                    {textHistory.map((text, index) => (
-                        <li key={index}>{text}</li>
-                    ))}
-                </ul>
+                <p>Recognized Text: {recognizedText}</p>
+                <p>Generated Messages: {generatedMessages}</p>
             </div>
         </div>
     );
