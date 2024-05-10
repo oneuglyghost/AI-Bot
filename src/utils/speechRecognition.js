@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
+const openAiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
 let recognition;
 let setRecognizedText;
@@ -59,7 +59,7 @@ export function startSpeechRecognition() {
                 messages: [
                     {
                         role: "system",
-                        content: "You are a helpful assistant. that can hear me "
+                        content: "you are a robot creature . that can hear me "
                     },
                     {
                         role: "user",
@@ -68,7 +68,7 @@ export function startSpeechRecognition() {
                 ]
             }, {
                 headers: {
-                    'Authorization': `Bearer ${apiKey}`,
+                    'Authorization': `Bearer ${openAiKey}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -78,8 +78,19 @@ export function startSpeechRecognition() {
 
             // Set the generated message state
             setGeneratedMessage(generatedMessage);
+            speak(generatedMessage);
         } catch (error) {
             console.error('Error generating text:', error);
         }
     };
 }
+const speak = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Wait for voices to be loaded
+    window.speechSynthesis.onvoiceschanged = function() {
+        const voices = window.speechSynthesis.getVoices();
+        utterance.voice = voices[1]; // Select the voice you want to use
+        window.speechSynthesis.speak(utterance);
+    };
+};

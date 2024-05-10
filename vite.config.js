@@ -12,6 +12,6 @@ export default defineConfig({
     open: true
   },
   define: {
-    'process.env.REACT_APP_OPENAI_API_KEY': JSON.stringify(process.env.REACT_APP_OPENAI_API_KEY)
+    'process.env.REACT_APP_OPENAI_API_KEY': JSON.stringify(process.env.REACT_APP_OPENAI_API_KEY),
   }
 });

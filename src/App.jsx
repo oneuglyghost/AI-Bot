@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { setupSpeechRecognition, startSpeechRecognition } from './utils/speechRecognition';
 
+
 const App = () => {
     const [recognizedText, setRecognizedText] = React.useState('');
     const [generatedMessages, setGeneratedMessages] = React.useState([]);
@@ -8,29 +9,32 @@ const App = () => {
 
     useEffect(() => {
         setupSpeechRecognition(handleRecognitionResult, setIsListening, setGeneratedMessages);
-    }, []);
+    }, [generatedMessages]);
 
-    const handleRecognitionResult = (recognized, generated) => {
+    const handleRecognitionResult = (recognized) => {
         setRecognizedText(recognized);
-        setGeneratedMessages(prevMessages => [...prevMessages, generated]);
+        setGeneratedMessages(generatedMessages);
     };
 
     const handleStartRecognition = () => {
         startSpeechRecognition();
     };
 
+    
+
     return (
         <div>
-            <h1>Voice to Text</h1>
+            <h1>Visual-Echo</h1>
             <button style={{ backgroundColor: isListening ? 'red' : 'green' }} onClick={handleStartRecognition}>
                 {isListening ? 'Listening...' : 'Start Listening'}
             </button>
             <div>
-                <p>Recognized Text: {recognizedText}</p>
-                <p>Generated Messages: {generatedMessages}</p>
+                <p>Prompt: {recognizedText}</p>
+                <p>Response: {generatedMessages}</p>
             </div>
         </div>
     );
 };
+
 
 export default App;
