@@ -7,6 +7,7 @@ let recognition;
 let setRecognizedText;
 let setIsListening;
 let setGeneratedMessage;
+let voices;
 
 export function setupSpeechRecognition(setRecognizedTextCallback, setIsListeningCallback, setGeneratedMessageCallback) {
     setRecognizedText = setRecognizedTextCallback;
@@ -59,7 +60,7 @@ export function startSpeechRecognition() {
                 messages: [
                     {
                         role: "system",
-                        content: "you are a robot creature . that can hear me "
+                        content: "you are a robot creature not an assistant . that can hear me "
                     },
                     {
                         role: "user",
@@ -84,13 +85,15 @@ export function startSpeechRecognition() {
         }
     };
 }
+// Wait for voices to be loaded
+window.speechSynthesis.onvoiceschanged = function() {
+    voices = window.speechSynthesis.getVoices();
+};
+
 const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // Wait for voices to be loaded
-    window.speechSynthesis.onvoiceschanged = function() {
-        const voices = window.speechSynthesis.getVoices();
-        utterance.voice = voices[1]; // Select the voice you want to use
-        window.speechSynthesis.speak(utterance);
-    };
+    // Select the voice you want to use
+    utterance.voice = voices[1];
+    window.speechSynthesis.speak(utterance);
 };
