@@ -74,6 +74,7 @@ export function startSpeechRecognition() {
                 }
             });
 
+            console.log('Response data:', response.data); // Log the response data
             const generatedMessage = response.data.choices[0].message.content;
             console.log('Generated message:', generatedMessage);
 
