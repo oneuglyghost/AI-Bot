@@ -95,6 +95,6 @@ const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
     
     // Select the voice you want to use
-    // utterance.voice = voices[1];
+    utterance.voice = voices[1];
     window.speechSynthesis.speak(utterance);
 };
