@@ -94,7 +94,12 @@ window.speechSynthesis.onvoiceschanged = function() {
 const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // Select the voice you want to use
-    utterance.voice = voices[1];
+    // Check if voices are available and the desired index is valid
+    if (voices.length > 1) {
+        utterance.voice = voices[1]; // Select the second voice
+    } else {
+        console.log('No voices available or index out of bounds');
+    }
+
     window.speechSynthesis.speak(utterance);
 };
