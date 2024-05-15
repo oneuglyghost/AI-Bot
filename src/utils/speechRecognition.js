@@ -92,15 +92,9 @@ window.speechSynthesis.onvoiceschanged = function() {
 };
 
 const speak = (text) => {
-    // Check if voices are loaded, if not, return
-    if (voices.length === 0) {
-        console.log('Voices not loaded yet');
-        return;
-    }
-
     const utterance = new SpeechSynthesisUtterance(text);
-
+    
     // Select the voice you want to use
-    utterance.voice = voices[1]; // Selecting the second voice, you may need to adjust this index
+    // utterance.voice = voices[1];
     window.speechSynthesis.speak(utterance);
 };
